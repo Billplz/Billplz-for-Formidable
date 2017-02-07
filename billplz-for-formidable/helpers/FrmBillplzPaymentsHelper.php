@@ -218,7 +218,6 @@ class FrmBillplzPaymentsHelper {
         require_once __DIR__ . '/../controllers/billplz.php';
         $billplz = new billplz();
         $data = $billplz->check_bill($api_key, $bill_id, $mode);
-
         $amt = number_format(($data['amount'] / 100), 2);
 
         if ($amt !== number_format($amount, 2)) {

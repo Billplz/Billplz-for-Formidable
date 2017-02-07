@@ -437,17 +437,18 @@ class FrmBillplzPaymentsController {
         }
         $mobile_field = isset($settings['billplz_mobile_field']) ? $settings['billplz_mobile_field'] : '';
         $mobile = '';
-        if (empty($entry) && !empty($email_field) && isset($_POST['item_meta'][$email_field])) {
+        if (empty($entry) && !empty($mobile_field) && isset($_POST['item_meta'][$mobile_field])) {
             // for reverse compatibility for custom code
-            $mobile = sanitize_text_field($_POST['item_meta'][$email_field]);
-        } else if (!empty($email_field) && isset($entry->metas[$email_field])) {
-            $mobile = $entry->metas[$email_field];
+            $mobile = sanitize_text_field($_POST['item_meta'][$mobile_field]);
+        } else if (!empty($mobile_field) && isset($entry->metas[$mobile_field])) {
+            $mobile = $entry->metas[$mobile_field];
         }
 
         if (empty($mobile)) {
             // no name has been set
             return '';
         }
+        
         return $mobile;
     }
 
@@ -632,16 +633,15 @@ class FrmBillplzPaymentsController {
         $entry = FrmEntry::getOne($entry_id);
         if (!$entry) {
             FrmBillplzPaymentsHelper::log_message(__('The IPN does not match an existing entry.', 'frmbz'));
-            wp_die();
+            wp_die('The IPN does not match an existing entry.');
         }
-
+        
         global $wpdb;
         if ($ipn_data['status']) {
 
             $pay_vars = [
                 'completed' => true,
                 'meta_value' => maybe_serialize($ipn_data['data']),
-                'status' => $ipn_data['data']['state'],
             ];
 
             $redirect_url = $ipn_data['return_url'];
@@ -652,10 +652,10 @@ class FrmBillplzPaymentsController {
             if ($ipn_data['completed'] == '0') {
                 // Update to payments table that the order has been paid
                 $u = $wpdb->update($wpdb->prefix . 'frm_payments', $pay_vars, array('receipt_id' => $ipn_data['bill_id']));
-
+                
                 if (!$u) {
                     FrmBillplzPaymentsHelper::log_message(sprintf(__('Payment %d was complete, but failed to update.', 'frmpp'), $ipn_data['payment_id']));
-                    wp_die();
+                    wp_die('Payment was complete, but failed to update.');
                 } else {
                     FrmBillplzPaymentsHelper::log_message(__('Payment successfully updated to PAID.', 'frmbz'));
                 }
@@ -663,9 +663,8 @@ class FrmBillplzPaymentsController {
                 if (FrmBillplzPaymentsHelper::stop_email_set($entry->form_id)) {
                     self::send_email_now($pay_vars, $item_action_db, $entry);
                 }
-
+                
                 do_action('frm_payment_billplz_ipn', compact('pay_vars', 'item_action_db', 'entry'));
-
                 self::actions_after_ipn($pay_vars, $entry);
             }
         } else {
