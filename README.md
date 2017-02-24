@@ -1,2 +1,2 @@
 # Billplz for Formidable
-Billplz Payment gateway plugin for Formidable Forms
+Billplz payment gateway plugin for Formidable Forms
