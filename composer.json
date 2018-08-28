@@ -1,0 +1,16 @@
+{
+    "name": "billplz/billplz-for-formidable",
+    "description": "A Billplz plugin for integration with Formidable Forms",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Billplz",
+            "email": "team@billplz.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6"
+    }
+}
