@@ -259,7 +259,7 @@ class FrmBillplzPaymentsController
         $form = FrmForm::getOne($form_id);
 
         $atts = array(
-            'action_settings' => $frm_pay_form_settings
+            'action_settings' => $frm_pay_form_settings,
             'form'     => $form,
             'entry_id' => $entry_id,
             'entry'    => FrmEntry::getOne($entry_id, true),
