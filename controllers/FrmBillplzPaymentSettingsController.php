@@ -104,6 +104,11 @@ class FrmBillplzPaymentSettingsController
             return;
         }
 
+        if (!isset($values['options']['collection_id']) || empty($values['options']['collection_id'])) {
+            // don't continue if there aren't collection_id settings to switch
+            return;
+        }
+
         if (!isset($values['options']['x_signature']) || empty($values['options']['x_signature'])) {
             // don't continue if there aren't x signature key settings to switch
             return;
@@ -116,6 +121,7 @@ class FrmBillplzPaymentSettingsController
         }
         
         $new_opts['api_key'] = FrmProFieldsHelper::switch_field_ids($new_opts['api_key']);
+        $new_opts['collection_id'] = FrmProFieldsHelper::switch_field_ids($new_opts['collection_id']);
         $new_opts['x_signature'] = FrmProFieldsHelper::switch_field_ids($new_opts['x_signature']);
                 
         if ($new_opts != $values['options']) {

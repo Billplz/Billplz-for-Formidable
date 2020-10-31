@@ -13,6 +13,7 @@ class FrmBillplzPaymentSettings
     {
         $siteurl = get_option('siteurl');
         return array(
+            'is_sandbox'             => 'production',
             'api_key'                => '',
             'collection_id'          => '',
             'x_signature'            => '',
@@ -95,6 +96,9 @@ class FrmBillplzPaymentSettings
 
     function validate($params, $errors)
     {
+        if (empty($params[ 'frm_billplz_is_sandbox' ])) {
+            $errors[] = __('Please select is sandbox mode', 'frmbz');
+        }
         if (empty($params[ 'frm_billplz_api_key' ])) {
             $errors[] = __('Please enter an API Key', 'frmbz');
         }

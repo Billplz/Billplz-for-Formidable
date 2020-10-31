@@ -1,5 +1,14 @@
     <table class="form-table">
         <tr class="form-field" valign="top">
+            <td width="200px"><label><?php _e('Is Sandbox', 'frmbz') ?></label></td>
+            <td>
+                <select name="frm_billplz_is_sandbox" id="frm_billplz_is_sandbox">
+                <option value="sandbox" <?php selected($frm_payment_settings->settings->is_sandbox, 'sandbox') ?>>sandbox</option>
+                <option value="production" <?php selected($frm_payment_settings->settings->is_sandbox, 'production') ?>>production</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="form-field" valign="top">
             <td width="200px"><label><?php _e('API Secret Key', 'frmbz') ?></label></td>
             <td>
                 <input type="text" name="frm_billplz_api_key" id="frm_billplz_api_key" value="<?php echo esc_attr($frm_payment_settings->settings->api_key) ?>" class="frm_long_input" />

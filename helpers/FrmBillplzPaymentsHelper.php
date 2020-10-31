@@ -34,6 +34,7 @@ class FrmBillplzPaymentsHelper
             'reference_1_field' => '',
             'reference_2_field' => '',
             'stop_email'     => '',
+            'is_sandbox'        => $frm_payment_settings->settings->is_sandbox,
             'api_key'        => $frm_payment_settings->settings->api_key,
             'collection_id'  => $frm_payment_settings->settings->collection_id,
             'x_signature'    => $frm_payment_settings->settings->x_signature,
@@ -55,7 +56,9 @@ class FrmBillplzPaymentsHelper
             $atts['payment'] = (array) $atts['payment'];
             if (isset($atts['payment']['action_id']) && ! empty($atts['payment']['action_id'])) {
                 $form_action = FrmBillplzPaymentAction::get_payment_action($atts['payment']['action_id']);
-                $atts['settings'] = $form_action->post_content;
+                if (is_object($form_action)){
+                    $atts['settings'] = $form_action->post_content;
+                }
             }
         }
 

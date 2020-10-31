@@ -5,17 +5,24 @@ class FrmBillplzPaymentsController
     public static $min_version = '3.0';
     public static $db_version = 2;
     public static $db_opt_name = 'frm_billplz_db_version';
+    public static $db_multithread_version = 1;
+    public static $db_multithread_opt_name = 'frm_billplz_multithread';
 
     public static function load_hooks()
     {
-        register_activation_hook(dirname(dirname(__FILE__)) . '/formidable-billplz.php', 'FrmBillplzPaymentsController::install');
+        $path = self::path();
+        register_activation_hook($path . '/formidable-billplz.php', 'FrmBillplzPaymentsController::install');
         
         if (is_admin()) {
             add_action('admin_menu', 'FrmBillplzPaymentsController::menu', 25);
             add_filter('frm_nav_array', 'FrmBillplzPaymentsController::frm_nav', 30);
-            add_filter('plugin_action_links_formidable-billplz/formidable-billplz.php', 'FrmBillplzPaymentsController::settings_link', 10, 2);
-            add_action('after_plugin_row_formidable-billplz/formidable-billplz.php', 'FrmBillplzPaymentsController::min_version_notice');
+            add_filter("plugin_action_links_{$path}/formidable-billplz.php", 'FrmBillplzPaymentsController::settings_link', 10, 2);
+            add_action("after_plugin_row_{$path}/formidable-billplz.php", 'FrmBillplzPaymentsController::min_version_notice');
+            add_action( 'admin_notices', 'FrmBillplzPaymentsController::get_started_headline' );
+            add_action( 'admin_init', 'FrmBillplzPaymentsController::load_updater' );
+            add_action( 'wp_ajax_frmbz_install', 'FrmBillplzPaymentsController::install' );
             add_filter('set-screen-option', 'FrmBillplzPaymentsController::save_per_page', 10, 3);
+
             add_filter('frm_form_options_before_update', 'FrmBillplzPaymentsController::update_options', 15, 2);
             add_action('frm_show_entry_sidebar', 'FrmBillplzPaymentsController::sidebar_list');
         }
@@ -23,7 +30,9 @@ class FrmBillplzPaymentsController
         add_action('wp_ajax_frm_payments_billplz_webhook', 'FrmBillplzPaymentsController::billplz_webhook');
         add_action('wp_ajax_nopriv_frm_payments_billplz_webhook', 'FrmBillplzPaymentsController::billplz_webhook');
 
+        // 2.0 hook
         add_action('frm_trigger_billplz_create_action', 'FrmBillplzPaymentsController::create_payment_trigger', 10, 3);
+
         add_filter('frm_csv_columns', 'FrmBillplzPaymentsController::add_payment_to_csv', 20, 2);
     }
 
@@ -36,8 +45,14 @@ class FrmBillplzPaymentsController
     {
         $frm_settings = FrmBillplzPaymentsHelper::get_settings();
         $menu = $frm_settings ? $frm_settings->menu : 'Formidable';
-        remove_action('admin_menu', 'FrmPaymentsController::menu', 26);
-        add_submenu_page('formidable', $menu . ' | Billplz', 'Payments', 'frm_view_entries', 'formidable-payments', 'FrmBillplzPaymentsController::route');
+
+        // Remove and replace "PayPal" with "Payment"
+        if(has_action('admin_menu', 'FrmPaymentsController::menu')) {
+          remove_action('admin_menu', 'FrmPaymentsController::menu', 26);
+          add_submenu_page('formidable', $menu . ' | Payments', 'Payments', 'frm_view_entries', 'formidable-payments', 'FrmBillplzPaymentsController::route');
+        } else {
+          add_submenu_page('formidable', $menu . ' | Billplz', 'Billplz', 'frm_view_entries', 'formidable-payments', 'FrmBillplzPaymentsController::route');
+        }
 
         add_filter('manage_' . sanitize_title($menu) . '_page_formidable-payments_columns', 'FrmBillplzPaymentsController::payment_columns');
         add_filter('manage_' . sanitize_title($menu) . '_page_formidable-entries_columns', 'FrmBillplzPaymentsController::entry_columns', 20);
@@ -64,7 +79,7 @@ class FrmBillplzPaymentsController
 
         return array(
             'cb'         => '<input type="checkbox" />',
-            'receipt_id' => __('Bill ID', 'frmbz'),
+            'receipt_id' => __('Receipt ID', 'frmbz'),
             'user_id'    => __('User', 'frmbz'),
             'item_id'    => __('Entry', 'frmbz'),
             'form_id'    => __('Form', 'frmbz'),
@@ -101,10 +116,42 @@ class FrmBillplzPaymentsController
         '</div></td></tr>';
     }
 
+    public static function get_started_headline(){
+        // Don't display this error as we're upgrading
+        $action = isset( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : '';
+        if ( $action == 'upgrade-plugin' && ! isset( $_GET['activate'] ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'administrator' ) ) {
+            return;
+        }
+
+        $db_version = get_option( self::$db_opt_name );
+        if ( (int) $db_version < self::$db_version ) {
+            if ( is_callable( 'FrmAppHelper::plugin_url' ) ) {
+                $url = FrmAppHelper::plugin_url();
+            } else if ( defined( 'FRM_URL' ) ) {
+                $url = FRM_URL;
+            } else {
+                return;
+            }
+            include( self::path() . '/views/notices/update_database.php' );
+        }
+    }
+
+    public static function load_updater() {
+        if ( class_exists( 'FrmAddon' ) ) {
+            FrmBillplzPaymentsController::load_hooks();
+        }
+    }
+
     public static function install($old_db_version = false)
     {
         $frm_payment_db = new FrmBillplzPaymentDb();
         $frm_payment_db->upgrade($old_db_version);
+        $frm_multithread_db = new FrmBillplzPaymentMultithreadDb();
+        $frm_multithread_db->upgrade($old_db_version);
     }
 
     private static function show($id)
@@ -184,10 +231,10 @@ class FrmBillplzPaymentsController
         global $frm_pay_form_settings;
         $frm_pay_form_settings = $settings;
 
-        // prevent empty action id on the second loop
-        global $valid_action_id;
-        if ($settings['action_id'] != '0') {
-            $valid_action_id = $settings['action_id'];
+        // prevent action_id with value 0 to redirect
+        if ($settings['action_id'] == '0') {
+            FrmBillplzPaymentsHelper::log_message("Please update your Billplz action settings to fix action_id 0 issue.");
+            return;
         }
 
         // trigger payment redirect after other functions have a chance to complete
@@ -208,27 +255,29 @@ class FrmBillplzPaymentsController
     public static function redirect_for_payment($entry_id, $form_id)
     {
         global $frm_pay_form_settings;
-        global $wpdb;
 
         $form = FrmForm::getOne($form_id);
 
         $atts = array(
+            'action_settings' => $frm_pay_form_settings,
             'form'     => $form,
             'entry_id' => $entry_id,
             'entry'    => FrmEntry::getOne($entry_id, true),
-            'action_settings' => $frm_pay_form_settings
         );
 
-        $amount = self::get_amount($atts['form'], $frm_pay_form_settings, $atts['entry']);
-        $name = self::get_name($atts['form'], $frm_pay_form_settings, $atts['entry']);
-        $email = self::get_email($atts['form'], $frm_pay_form_settings, $atts['entry']);
-        $mobile = self::get_mobile($atts['form'], $frm_pay_form_settings, $atts['entry']);
-        $description = self::get_description($atts['form'], $frm_pay_form_settings, $atts['entry']);
+        self::check_global_fallbacks( $atts['action_settings'] );
 
-        $ref_1_label = self::get_reference_1_label($atts['form'], $frm_pay_form_settings, $atts['entry']);
-        $ref_1 = self::get_reference_1($atts['form'], $frm_pay_form_settings, $atts['entry']);
-        $ref_2_label = self::get_reference_2_label($atts['form'], $frm_pay_form_settings, $atts['entry']);
-        $ref_2 = self::get_reference_2($atts['form'], $frm_pay_form_settings, $atts['entry']);
+        $amount = self::get_amount($atts['form'], $atts['action_settings'], $atts['entry']);
+        $name = self::get_name($atts['form'], $atts['action_settings'], $atts['entry']);
+        $email = self::get_email($atts['form'], $atts['action_settings'], $atts['entry']);
+        $mobile = self::get_mobile($atts['form'], $atts['action_settings'], $atts['entry']);
+        $description = self::get_description($atts['form'], $atts['action_settings'], $atts['entry']);
+
+        $ref_1_label = self::get_reference_1_label($atts['form'], $atts['action_settings'], $atts['entry']);
+        $ref_1 = self::get_reference_1($atts['form'], $atts['action_settings'], $atts['entry']);
+        $ref_2_label = self::get_reference_2_label($atts['form'], $atts['action_settings'], $atts['entry']);
+        $ref_2 = self::get_reference_2($atts['form'], $atts['action_settings'], $atts['entry']);
+        $is_sandbox = self::get_is_sandbox($atts['form'], $atts['action_settings'], $atts['entry']);
 
         if (empty($amount) || empty($name) || empty($description)) {
             return;
@@ -244,6 +293,7 @@ class FrmBillplzPaymentsController
             global $frm_version; //global fallback
         }
 
+        $is_sandbox = $is_sandbox == 'sandbox';
         $api_key = trim($frm_pay_form_settings['api_key']);
         $collection_id = trim($frm_pay_form_settings['collection_id']);
         $webhook_url = admin_url('admin-ajax.php?action=frm_payments_billplz_webhook');
@@ -252,18 +302,22 @@ class FrmBillplzPaymentsController
             return;
         }
 
-        $connnect = (new FrmBillplzPaymentsBillplzWPConnectHelper($api_key))->detectMode();
-        $billplz = new FrmBillplzPaymentsBillplzAPIHelper($connnect);
+        $connect = FrmBillplzPaymentsBillplzWPConnectHelper::get_instance();
+        $connect->set_api_key($api_key, $is_sandbox);
+
+        $billplz = FrmBillplzPaymentsBillplzAPIHelper::get_instance();
+        $billplz->set_connect($connect);
 
         $parameter = array(
             'collection_id' => $collection_id,
-            'email'=> $email,
-            'mobile'=> $mobile,
+            'email'=> trim($email),
+            'mobile'=> trim($mobile),
             'name'=> substr($name, 0, 255),
             'amount'=> strval($amount * 100),
             'callback_url'=> $webhook_url,
             'description'=> substr($description, 0, 200)
         );
+
         $optional = array(
             'redirect_url' => $webhook_url,
             'reference_1_label' => substr($ref_1_label, 0, 20),
@@ -272,7 +326,7 @@ class FrmBillplzPaymentsController
             'reference_2' => substr($ref_2, 0, 120)
         );
 
-        list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, '0'));
+        list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
         $atts['amount'] = $amount;
         self::create_invoice_for_payment($atts, $rbody);
 
@@ -282,24 +336,23 @@ class FrmBillplzPaymentsController
             $conf_args['ajax'] = true;
         }
 
-        if (is_callable('FrmProEntriesController::confirmation')) {
-            FrmProEntriesController::confirmation('redirect', $form, $form->options, $entry_id, $conf_args);
-        } else {
-            $conf_args['id'] = $entry_id;
-            self::confirmation($form, $conf_args);
-        }
+        // if (is_callable('FrmProEntriesController::confirmation')) {
+        //     FrmProEntriesController::confirmation('redirect', $form, $form->options, $entry_id, $conf_args);
+        // } else {
+        $conf_args['id'] = $entry_id;
+        self::confirmation($form, $conf_args);
+        // }
     }
 
     public static function create_invoice_for_payment($atts, $billplz)
     {
-        global $valid_action_id;
         $frm_payment = new FrmBillplzPayment();
         $invoice = $frm_payment->create(array(
             'item_id'     => $atts['entry_id'],
             'meta_value'  => maybe_serialize($billplz),
             'amount'      => $atts['amount'],
             'receipt_id'  => $billplz['id'],
-            'action_id'   => $valid_action_id,
+            'action_id'   => $atts['action_settings']['action_id'],
         ));
 
         return $invoice;
@@ -496,51 +549,67 @@ class FrmBillplzPaymentsController
         return trim($ref_2);
     }
 
-    public static function route()
+    public static function get_is_sandbox($form, $settings, $entry = array())
     {
-        $action = isset($_REQUEST['frm_action']) ? 'frm_action' : 'action';
-        $action = FrmAppHelper::get_param($action, '', 'get', 'sanitize_title');
+        $is_sandbox_field = isset($settings['is_sandbox_field']) ? $settings['is_sandbox_field'] : '';
+        $is_sandbox = 'production';
+        if (empty($entry) && ! empty($is_sandbox_field) && isset($_POST['item_meta'][ $is_sandbox_field ])) {
+            // for reverse compatibility for custom code
+            $is_sandbox = sanitize_text_field($_POST['item_meta'][ $is_sandbox_field ]);
+        } elseif (! empty($is_sandbox_field) && isset($entry->metas[ $is_sandbox_field ])) {
+            $is_sandbox = $entry->metas[ $is_sandbox_field ];
+        } elseif (isset($settings['is_sandbox'])) {
+            $is_sandbox = $settings['is_sandbox'];
+        }
 
-        if ($action == 'show') {
-            return self::show(FrmAppHelper::get_param('id', false, 'get', 'sanitize_text_field'));
-        } elseif ($action == 'new') {
-            return self::new_payment();
-        } elseif ($action == 'create') {
-            return self::create();
-        } elseif ($action == 'edit') {
-            return self::edit();
-        } elseif ($action == 'update') {
-            return self::update();
-        } elseif ($action == 'destroy') {
-            return self::destroy();
-        } else {
-            $action = FrmAppHelper::get_param('action', '', 'get', 'sanitize_text_field');
-            if ($action == -1) {
-                $action = FrmAppHelper::get_param('action2', '', 'get', 'sanitize_text_field');
-            }
-            
-            if (strpos($action, 'bulk_') === 0) {
-                if ($_GET && $action) {
-                    $_SERVER['REQUEST_URI'] = str_replace('&action=' . $action, '', $_SERVER['REQUEST_URI']);
-                }
+        return trim($is_sandbox);
+    }
 
-                return self::bulk_actions($action);
-            } else {
-                return self::display_list();
-            }
+    private static function check_global_fallbacks( &$settings ) {
+        $globals = array( 'is_sandbox', 'api_key', 'collection_id', 'x_signature', 'description', 'return_url', 'cancel_url' );
+        foreach ( $globals as $name ) {
+            $settings[ $name ] = FrmBillplzPaymentsHelper::get_action_setting( $name, array( 'settings' => $settings ) );
         }
     }
 
-    public static function update_options($options, $values)
-    {
-        $defaults = FrmBillplzPaymentsHelper::get_default_options();
+    public static function stop_registration_email( $send_it, $form, $entry_id ) {
+        if ( ! is_callable( 'FrmRegAppController::send_paid_user_notification' ) ) {
+            // don't stop the registration email unless the function exists to send it later
+            return $send_it;
+        }
         
-        foreach ($defaults as $opt => $default) {
-            $options[ $opt ] = isset($values['options'][ $opt ]) ? $values['options'][ $opt ] : $default;
-            unset($default, $opt);
+        if ( ! isset( $_POST['payment_completed'] ) || empty( $_POST['payment_completed'] ) ) {
+            // stop the email if payment is not completed
+            $send_it = false;
+        }
+        
+        return $send_it;
+    }
+
+    public static function stop_the_email($emails, $values, $form_id, $args = array()) {
+        if ( isset( $_POST['payment_completed'] ) && absint( $_POST['payment_completed'] ) ) {
+            // always send the email if the payment was just completed
+            return $emails;
         }
 
-        return $options;
+        $action = FrmAppHelper::get_post_param( 'action', '', 'sanitize_title' );
+        $frm_action = FrmAppHelper::get_post_param( 'frm_action', '', 'sanitize_title' );
+        if ( isset($args['entry']) && $action == 'frm_entries_send_email' ) {
+            // if resending, make sure the payment is complete first
+            global $wpdb;
+            $complete = FrmDb::get_var( $wpdb->prefix .'frm_payments', array( 'item_id' => $args['entry']->id, 'completed' => 1 ), 'completed' );
+
+        } else {
+            // send the email when resending the email, and we don't know if the payment is complete
+            $complete = ( ! isset( $args['entry'] ) && ( $frm_action == 'send_email' || $action == 'frm_entries_send_email' ) );
+        }
+            
+        //do not send if payment is not complete
+        if ( ! $complete ) {
+            $emails = array();
+        }
+        
+        return $emails;
     }
 
     public static function redirect_url($url, $form, $args = array( ))
@@ -551,80 +620,6 @@ class FrmBillplzPaymentsController
         }
 
         return $url;
-    }
-
-    public static function sidebar_list($entry)
-    {
-        global $wpdb;
-        
-        $payments = $wpdb->get_results($wpdb->prepare("SELECT id,begin_date,amount,completed FROM {$wpdb->prefix}frm_payments WHERE item_id=%d ORDER BY created_at DESC", $entry->id));
-        
-        if (!$payments) {
-            return;
-        }
-        
-        $date_format = get_option('date_format');
-        $currencies = FrmBillplzPaymentsHelper::get_currencies();
-        
-        include(self::path() .'/views/payments/sidebar_list.php');
-    }
-
-    public static function entry_columns($columns)
-    {
-        if (is_callable('FrmForm::get_current_form_id')) {
-            $form_id = FrmForm::get_current_form_id();
-        } else {
-            $form_id = FrmEntriesHelper::get_current_form_id();
-        }
-
-        if ($form_id) {
-            $columns[ $form_id . '_payments' ] = __('Payments', 'frmbz');
-            $columns[ $form_id . '_current_payment' ] = __('Paid', 'frmbz');
-            $columns[ $form_id . '_payment_expiration' ] = __('Expiration', 'frmbz');
-        }
-
-        return $columns;
-    }
-
-    public static function entry_current_payment_column($value, $atts)
-    {
-        $payments = FrmBillplzPaymentEntry::get_completed_payments($atts['item']);
-        $is_current = ! empty($payments) && ! FrmBillplzPaymentEntry::is_expired($atts['item']);
-        $value = $is_current ? __('Paid', 'frmbz') : __('Not Paid', 'frmbz');
-        return $value;
-    }
-
-    public static function entry_payment_expiration_column($value, $atts)
-    {
-        $expiration = FrmBillplzPaymentEntry::get_entry_expiration($atts['item']);
-        return $expiration ? $expiration : '';
-    }
-
-    public static function add_payment_to_csv($headings, $form_id)
-    {
-        if (FrmBillplzPaymentAction::form_has_payment_action($form_id)) {
-            $headings['billplz'] = __('Payments', 'frmbz');
-            $headings['billplz_expiration'] = __('Expiration Date', 'frmbz');
-            $headings['billplz_complete'] = __('Paid', 'frmbz');
-            add_filter('frm_csv_row', 'FrmBillplzPaymentsController::add_payment_to_csv_row', 20, 2);
-        }
-        return $headings;
-    }
-
-    public static function add_payment_to_csv_row($row, $atts)
-    {
-        $row['billplz'] = 0;
-        $atts['item'] = $atts['entry'];
-        $row['billplz_expiration'] = self::entry_payment_expiration_column('', $atts);
-
-        $payments = FrmBillplzPaymentEntry::get_completed_payments($atts['entry']);
-        foreach ($payments as $payment) {
-            $row['billplz'] += $payment->amount;
-        }
-
-        $row['billplz_complete'] = ! empty($payments) && ! FrmBillplzPaymentEntry::is_expired($atts['entry']);
-
-        return $row;
     }
 
     //Trigger the email to send after a payment is completed:
@@ -674,10 +669,15 @@ class FrmBillplzPaymentsController
 
         $entry = FrmEntry::getOne($payment_row->item_id);
         if (! $entry) {
+            $action = $data['type'];
+            FrmBillplzPaymentsHelper::log_message("The {$action} does not match an existing entry.");
             wp_die();
         }
 
-        if ($data['paid'] && ! $payment_row->completed) {
+        // Custom made mechanism to prevent race-condition
+        $frm_multithread = new FrmBillplzPaymentMultithread();
+
+        if ($data['paid'] && ! $payment_row->completed && $frm_multithread->create($data['id'])) {
             $frm_payment->update($payment_row->id, [
                 'receipt_id' => $data['id'],
                 'meta_value' => maybe_serialize($data),
@@ -688,24 +688,19 @@ class FrmBillplzPaymentsController
 
             FrmBillplzPaymentsHelper::log_message('Payment successfully updated for bill '.$data['id']. ' type: '. $data['type']);
 
-            $bypass = false;
-            if (defined('BILLPLZ') && BILLPLZ === 'dev') {
-                $bypass = true;
-            }
-
             $pay_vars = array(
                 'action_id' => $payment_row->action_id,
                 'item_id' => $payment_row->item_id,
                 'completed' => true
             );
 
-            if ($data['type'] === 'callback' || $bypass) {
-                self::actions_after_callback($pay_vars, $entry);
+            
+            self::actions_after_callback($pay_vars, $entry);
 
-                if (FrmBillplzPaymentsHelper::stop_email_set($entry->form_id)) {
-                    self::send_email_now($pay_vars, $entry);
-                }
+            if (FrmBillplzPaymentsHelper::stop_email_set($entry->form_id)) {
+              self::send_email_now($pay_vars, $entry);
             }
+            $frm_multithread->delete($data['id']);
         }
 
         if ($data['type'] === 'redirect') {
@@ -781,6 +776,52 @@ class FrmBillplzPaymentsController
         return do_shortcode($value);
     }
 
+    public static function update_options($options, $values)
+    {
+        $defaults = FrmBillplzPaymentsHelper::get_default_options();
+        
+        foreach ($defaults as $opt => $default) {
+            $options[ $opt ] = isset($values['options'][ $opt ]) ? $values['options'][ $opt ] : $default;
+            unset($default, $opt);
+        }
+
+        return $options;
+    }
+
+    public static function sidebar_list($entry)
+    {
+        global $wpdb;
+        
+        $payments = $wpdb->get_results($wpdb->prepare("SELECT id,begin_date,amount,completed FROM {$wpdb->prefix}frm_payments WHERE item_id=%d ORDER BY created_at DESC", $entry->id));
+        
+        if (!$payments) {
+            return;
+        }
+        
+        $date_format = get_option('date_format');
+        $currencies = FrmBillplzPaymentsHelper::get_currencies();
+        
+        include(self::path() .'/views/payments/sidebar_list.php');
+    }
+
+    public static function entry_columns($columns)
+    {
+        if (is_callable('FrmForm::get_current_form_id')) {
+            $form_id = FrmForm::get_current_form_id();
+        } else {
+            $form_id = FrmEntriesHelper::get_current_form_id();
+        }
+
+        if ($form_id) {
+            $columns[ $form_id . '_payments' ] = __('Payments', 'frmbz');
+            $columns[ $form_id . '_current_payment' ] = __('Paid', 'frmbz');
+            $columns[ $form_id . '_payment_expiration' ] = __('Expiration', 'frmbz');
+        }
+
+        return $columns;
+    }
+
+
     public static function entry_payment_column($value, $atts)
     {
         $value = '';
@@ -792,6 +833,48 @@ class FrmBillplzPaymentsController
         }
         return $value;
     }
+
+    public static function entry_current_payment_column($value, $atts)
+    {
+        $payments = FrmBillplzPaymentEntry::get_completed_payments($atts['item']);
+        $is_current = ! empty($payments) && ! FrmBillplzPaymentEntry::is_expired($atts['item']);
+        $value = $is_current ? __('Paid', 'frmbz') : __('Not Paid', 'frmbz');
+        return $value;
+    }
+
+    public static function entry_payment_expiration_column($value, $atts)
+    {
+        $expiration = FrmBillplzPaymentEntry::get_entry_expiration($atts['item']);
+        return $expiration ? $expiration : '';
+    }
+
+    public static function add_payment_to_csv($headings, $form_id)
+    {
+        if (FrmBillplzPaymentAction::form_has_payment_action($form_id)) {
+            $headings['billplz'] = __('Payments', 'frmbz');
+            $headings['billplz_expiration'] = __('Expiration Date', 'frmbz');
+            $headings['billplz_complete'] = __('Paid', 'frmbz');
+            add_filter('frm_csv_row', 'FrmBillplzPaymentsController::add_payment_to_csv_row', 20, 2);
+        }
+        return $headings;
+    }
+
+    public static function add_payment_to_csv_row($row, $atts)
+    {
+        $row['billplz'] = 0;
+        $atts['item'] = $atts['entry'];
+        $row['billplz_expiration'] = self::entry_payment_expiration_column('', $atts);
+
+        $payments = FrmBillplzPaymentEntry::get_completed_payments($atts['entry']);
+        foreach ($payments as $payment) {
+            $row['billplz'] += $payment->amount;
+        }
+
+        $row['billplz_complete'] = ! empty($payments) && ! FrmBillplzPaymentEntry::is_expired($atts['entry']);
+
+        return $row;
+    }
+
 
     private static function new_payment()
     {
@@ -923,5 +1006,40 @@ class FrmBillplzPaymentsController
         }
         
         require(self::path() .'/views/payments/edit.php');
+    }
+
+    public static function route()
+    {
+        $action = isset($_REQUEST['frm_action']) ? 'frm_action' : 'action';
+        $action = FrmAppHelper::get_param($action, '', 'get', 'sanitize_title');
+
+        if ($action == 'show') {
+            return self::show(FrmAppHelper::get_param('id', false, 'get', 'sanitize_text_field'));
+        } elseif ($action == 'new') {
+            return self::new_payment();
+        } elseif ($action == 'create') {
+            return self::create();
+        } elseif ($action == 'edit') {
+            return self::edit();
+        } elseif ($action == 'update') {
+            return self::update();
+        } elseif ($action == 'destroy') {
+            return self::destroy();
+        } else {
+            $action = FrmAppHelper::get_param('action', '', 'get', 'sanitize_text_field');
+            if ($action == -1) {
+                $action = FrmAppHelper::get_param('action2', '', 'get', 'sanitize_text_field');
+            }
+            
+            if (strpos($action, 'bulk_') === 0) {
+                if ($_GET && $action) {
+                    $_SERVER['REQUEST_URI'] = str_replace('&action=' . $action, '', $_SERVER['REQUEST_URI']);
+                }
+
+                return self::bulk_actions($action);
+            } else {
+                return self::display_list();
+            }
+        }
     }
 }
