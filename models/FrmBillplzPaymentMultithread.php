@@ -1,6 +1,6 @@
 <?php
 
-class FrmBillplzMultithread
+class FrmBillplzPaymentMultithread
 {
     
     function create($bill_id)

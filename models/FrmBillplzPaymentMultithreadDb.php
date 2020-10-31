@@ -1,6 +1,6 @@
 <?php
 
-class FrmBillplzMultithreadDb
+class FrmBillplzPaymentMultithreadDb
 {
    
     var $payments;

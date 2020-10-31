@@ -150,7 +150,7 @@ class FrmBillplzPaymentsController
     {
         $frm_payment_db = new FrmBillplzPaymentDb();
         $frm_payment_db->upgrade($old_db_version);
-        $frm_multithread_db = new FrmBillplzMultithreadDb();
+        $frm_multithread_db = new FrmBillplzPaymentMultithreadDb();
         $frm_multithread_db->upgrade($old_db_version);
     }
 
@@ -675,7 +675,7 @@ class FrmBillplzPaymentsController
         }
 
         // Custom made mechanism to prevent race-condition
-        $frm_multithread = new FrmBillplzMultithread();
+        $frm_multithread = new FrmBillplzPaymentMultithread();
 
         if ($data['paid'] && ! $payment_row->completed && $frm_multithread->create($data['id'])) {
             $frm_payment->update($payment_row->id, [
