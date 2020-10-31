@@ -231,11 +231,11 @@ class FrmBillplzPaymentsController
         global $frm_pay_form_settings;
         $frm_pay_form_settings = $settings;
 
-        // prevent empty action id on the second loop
-        // global $valid_action_id;
-        // if ($settings['action_id'] != '0') {
-        //     $valid_action_id = $settings['action_id'];
-        // }
+        // prevent action_id with value 0 to redirect
+        if ($settings['action_id'] == '0') {
+            FrmBillplzPaymentsHelper::log_message("Please update your Billplz action settings to fix action_id 0 issue.");
+            return;
+        }
 
         // trigger payment redirect after other functions have a chance to complete
         add_action('frm_after_create_entry', 'FrmBillplzPaymentsController::redirect_for_payment', 50, 2);
@@ -346,14 +346,13 @@ class FrmBillplzPaymentsController
 
     public static function create_invoice_for_payment($atts, $billplz)
     {
-        // global $valid_action_id;
         $frm_payment = new FrmBillplzPayment();
         $invoice = $frm_payment->create(array(
             'item_id'     => $atts['entry_id'],
             'meta_value'  => maybe_serialize($billplz),
             'amount'      => $atts['amount'],
             'receipt_id'  => $billplz['id'],
-            'action_id'   => isset( $atts['action_settings']['action_id'] ) ? $atts['action_settings']['action_id'] : 0,
+            'action_id'   => $atts['action_settings']['action_id'],
         ));
 
         return $invoice;
