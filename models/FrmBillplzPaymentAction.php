@@ -71,7 +71,7 @@ class FrmBillplzPaymentAction extends FrmFormAction
 
     function after_pay_row($atts)
     {
-        $id = 'frmpp_after_pay_row_' . absint($atts['form_action']->ID) . '_' . $atts['row_num'];
+        $id = 'frmbz_after_pay_row_' . absint($atts['form_action']->ID) . '_' . $atts['row_num'];
         $atts['name'] = $this->get_field_name('change_field');
         $atts['form_fields'] = $this->get_field_options($atts['form_id']);
         include(FrmBillplzPaymentsController::path() . '/views/settings/_after_pay_row.php');

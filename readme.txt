@@ -25,6 +25,7 @@ None
 = 3.2.0 =
 * NEW: Build based on Formidable PayPal version 3.09
 * NEW: Support for Enable Extra Payment Completion Information
+* NEW: Fix issue with After Payment unable to set more than one column
 * Note: Upgrading from 3.1.0 requires reactivation of the plugin for database migration
 
 = 3.1.0 =
