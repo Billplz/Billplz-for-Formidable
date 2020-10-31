@@ -1,15 +1,14 @@
 === Billplz for Formidable ===
 Contributors: wanzulnet
-Tags: billplz,paymentgateway,fpx,boost
-Tested up to: 4.9.8
-Stable tag: 3.1.0
-Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
+Tags: billplz
+Tested up to: 5.5.2
+Stable tag: 3.2.0
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP: 5.6
 
-Accept Internet Banking Payment by using Billplz.
+Accept payment by using Billplz.
 
 == Description ==
 Install this plugin to accept payment using Billplz.
@@ -23,6 +22,10 @@ None
 
 == Changelog ==
 
+= 3.2.0 =
+* NEW: Build based on Formidable PayPal version 3.09
+* NEW: Support for Enable Extra Payment Completion Information
+
 = 3.1.0 =
 * NEW: Build based on Formidable Paypal version 3.08
 
@@ -34,15 +37,19 @@ None
 
 = Where can I get API Secret Key? =
 
-You can the API Secret Key at your Billplz Account Settings. [Get it here](https://www.billplz.com/enterprise/setting)
+You can the API Secret Key on your Billplz Account Settings.
+
+= Where can I get Collection ID? =
+
+You can the Collection ID on your Billplz Account.
 
 = Where can I get X Signature Key? =
 
-You can the X Signature Key at your Billplz Account Settings. [Get it here](https://www.billplz.com/enterprise/setting)
+You can the X Signature Key on your Billplz Account Settings.
 
 = Troubleshooting =
 
 None
 
 == Links ==
-[Sign Up](http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/) for Billplz account to accept payment using Billplz now!
+Visit [Billplz](https://www.billplz.com).

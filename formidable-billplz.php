@@ -1,12 +1,13 @@
 <?php
 /**
  * Plugin Name: Billplz for Formidable
- * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
- * Version: 3.1.0
+ * Description: Billplz. Fair payment platform.
+ * Version: 3.2.0
  * Plugin URI: http://github.com/billplz/billplz-for-formidable
  * Author URI: https://www.billplz.com
- * Author: Billplz Sdn. Bhd.
+ * Author: Billplz Sdn Bhd
  * License: GPLv3
+ * Text Domain: frmbz
 */
 
 function frm_billplz_forms_autoloader($class_name)

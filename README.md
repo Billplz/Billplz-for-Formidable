@@ -7,7 +7,6 @@ Accept payment using Billplz by using this plugin.
 ### Manual Installation
 
 * Download: [Plugin File](https://github.com/billplz/billplz-for-formidable/archive/master.zip)
-* Rename the folder inside the archive to `formidable-billplz`
 * Login to WordPress Dashboard
 * Navigate to Plugins >> Add New >> Upload
 * Upload the files >> Activate
@@ -18,14 +17,6 @@ Accept payment using Billplz by using this plugin.
 * Navigate to Formidable >> Forms >> Settings >> Form Actions >> Billplz
 * Set up API Secret Key, Collection ID and X Signature Key and ALL relevant details
 * Save changes
-
-## Development/Testing Environment
-
-Set define on `wp-config.php` to bypass callback only function
-
-```php
-define('BILLPLZ', 'dev');
-```
 
 ## Other
 

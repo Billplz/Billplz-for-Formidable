@@ -18,7 +18,7 @@
     </tr>
     
     <tr valign="top">
-        <th scope="row"><?php _e('Bill', 'frmbz') ?></th>
+        <th scope="row"><?php _e('Receipt', 'frmbz') ?></th>
         <td><input type="text" name="receipt_id" value="<?php echo esc_attr($payment['receipt_id']) ?>" /></td>
     </tr>
     
@@ -41,6 +41,7 @@
         <th scope="row"><?php _e('Payment Method', 'frmbz') ?></th>
         <td><select name="paysys">
                 <option value="billplz" <?php selected($payment['paysys'], 'billplz') ?>><?php _e('Billplz', 'frmbz'); ?></option>
+                <option value="paypal" <?php selected($payment['paysys'], 'paypal') ?>><?php _e('PayPal', 'frmbz'); ?></option>
                 <option value="manual" <?php selected($payment['paysys'], 'manual') ?>><?php _e('Manual', 'frmbz'); ?></option>
             </select>
     </tr>
