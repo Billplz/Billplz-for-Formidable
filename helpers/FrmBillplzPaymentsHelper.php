@@ -56,7 +56,9 @@ class FrmBillplzPaymentsHelper
             $atts['payment'] = (array) $atts['payment'];
             if (isset($atts['payment']['action_id']) && ! empty($atts['payment']['action_id'])) {
                 $form_action = FrmBillplzPaymentAction::get_payment_action($atts['payment']['action_id']);
-                $atts['settings'] = $form_action->post_content;
+                if (is_object($form_action)){
+                    $atts['settings'] = $form_action->post_content;
+                }
             }
         }
 
