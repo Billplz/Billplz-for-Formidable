@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.5.2
-Stable tag: 3.2.0
+Stable tag: 3.2.1
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,6 +21,9 @@ None
 * Later
 
 == Changelog ==
+
+= 3.2.1 =
+* NEW: Added option to save bill id
 
 = 3.2.0 =
 * NEW: Build based on Formidable PayPal version 3.09

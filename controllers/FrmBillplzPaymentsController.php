@@ -327,8 +327,22 @@ class FrmBillplzPaymentsController
         );
 
         list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
+
+        if ($rheader != 200) {
+            FrmBillplzPaymentsHelper::log_message('Failed to create bill ' . print_r($rbody, true));
+            return;
+        }
+
         $atts['amount'] = $amount;
         self::create_invoice_for_payment($atts, $rbody);
+
+        if (isset($atts['action_settings']['update_bill_id'])){
+            FrmProEntryMeta::update_single_field(array(
+              'entry_id' => $entry_id,
+              'field_id' => $atts['action_settings']['update_bill_id'],
+              'value'    => $rbody['id'],
+            ));
+        }
 
         add_filter('frm_redirect_url', 'FrmBillplzPaymentsController::redirect_url', 9, 3);
         $conf_args = array( 'bill_url' => $rbody['url'] );

@@ -242,6 +242,29 @@
             <span class="clear"></span>
         </p>
 
+        <!---Update Bill ID field -->
+        <p class="frm_bz_toggle_new">
+            <label class="frm_left_label"><?php _e('Update Bill ID', 'frmbz') ?></label>
+            <select name="<?php echo esc_attr($this->get_field_name('update_bill_id')) ?>" class="frm_cancelnew">
+                <option value=""><?php _e('&mdash; Select &mdash;') ?></option>
+                <?php
+                $selected = false;
+                foreach ($form_fields as $field) {
+                    if ($form_action->post_content['update_bill_id'] == $field->id) {
+                        $selected = true;
+                    }
+                    ?>
+                    <option value="<?php echo esc_attr($field->id) ?>" <?php selected($form_action->post_content['update_bill_id'], $field->id) ?>><?php
+                    echo esc_attr(FrmAppHelper::truncate($field->name, 50, 1));
+                    unset($field);
+                    ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <span class="clear"></span>
+        </p>
+
             <p>
                 <label class="frm_left_label"><?php _e('Notifications', 'frmbz') ?></label>
                 <label for="<?php echo esc_attr($this->get_field_id('stop_email')) ?>">

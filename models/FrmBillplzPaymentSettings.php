@@ -22,6 +22,7 @@ class FrmBillplzPaymentSettings
             'reference_1'            => '',
             'reference_2_label'      => '',
             'reference_2'            => '',
+            'update_bill_id'         => '',
             'currency'               => 'MYR',
             'return_url'             => $siteurl,
             'cancel_url'             => $siteurl,
