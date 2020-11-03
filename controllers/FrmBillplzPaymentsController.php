@@ -350,12 +350,12 @@ class FrmBillplzPaymentsController
             $conf_args['ajax'] = true;
         }
 
-        // if (is_callable('FrmProEntriesController::confirmation')) {
-        //     FrmProEntriesController::confirmation('redirect', $form, $form->options, $entry_id, $conf_args);
-        // } else {
-        $conf_args['id'] = $entry_id;
-        self::confirmation($form, $conf_args);
-        // }
+        if (is_callable('FrmProEntriesController::confirmation')) {
+          FrmProEntriesController::confirmation('redirect', $form, $form->options, $entry_id, $conf_args);
+        } else {
+          $conf_args['id'] = $entry_id;
+          self::confirmation($form, $conf_args);
+        }
     }
 
     public static function create_invoice_for_payment($atts, $billplz)

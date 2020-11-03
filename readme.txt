@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.5.2
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,6 +21,9 @@ None
 * Later
 
 == Changelog ==
+
+= 3.2.2 =
+* Fixed: Issue with AJAX load enabled
 
 = 3.2.1 =
 * NEW: Added option to save bill id
