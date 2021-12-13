@@ -43,10 +43,10 @@ class FrmBillplzPaymentAction extends FrmFormAction
     {
         $form_fields = $this->get_field_options($args['form']->id);
         $show_amount = ($form_action->post_content['amount'] != '');
-        $show_name = ($form_action->post_content['name'] != '');
+        $show_name = ($form_action->post_content['bill_name'] != '');
         $show_email = ($form_action->post_content['email'] != '');
         $show_mobile = ($form_action->post_content['mobile'] != '');
-        $show_description = ($form_action->post_content['description'] != '');
+        $show_description = ($form_action->post_content['bill_description'] != '');
         $show_reference_1 = ($form_action->post_content['reference_1'] != '');
         $show_reference_2 = ($form_action->post_content['reference_2'] != '');
         

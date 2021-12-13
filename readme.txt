@@ -1,8 +1,8 @@
 === Billplz for Formidable ===
-Contributors: wanzulnet
+Contributors: billplz
 Tags: billplz
-Tested up to: 5.5.2
-Stable tag: 3.2.2
+Tested up to: 5.8
+Stable tag: 3.2.3
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,6 +21,12 @@ None
 * Later
 
 == Changelog ==
+
+= 3.2.3 =
+* FIXED: Broken action settings links
+* FIXED: Conflict with Forms Settings for bill description value
+* FIXED: Conflict with Forms Settings for bill name value
+* IMPROVED: Now support dynamic parameter key for X Signature Validation
 
 = 3.2.2 =
 * Fixed: Issue with AJAX load enabled
