@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Billplz for Formidable
  * Description: Billplz. Fair payment platform.
- * Version: 3.2.2
+ * Version: 3.2.3
  * Plugin URI: http://github.com/billplz/billplz-for-formidable
  * Author URI: https://www.billplz.com
  * Author: Billplz Sdn Bhd

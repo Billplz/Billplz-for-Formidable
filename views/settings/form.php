@@ -32,7 +32,7 @@
         <tr class="form-field" valign="top">
             <td width="200px"><label><?php _e('Description', 'frmbz') ?></label></td>
             <td>
-                <input type="text" name="frm_billplz_description" id="frm_billplz_description" value="<?php echo esc_attr($frm_payment_settings->settings->description) ?>" class="frm_long_input" />
+                <input type="text" name="frm_billplz_description" id="frm_billplz_description" value="<?php echo esc_attr($frm_payment_settings->settings->bill_description) ?>" class="frm_long_input" />
                     
             </td>
         </tr>

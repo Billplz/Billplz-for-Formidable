@@ -11,12 +11,13 @@ class FrmBillplzPaymentsController
     public static function load_hooks()
     {
         $path = self::path();
+        $basename = self::basename();
         register_activation_hook($path . '/formidable-billplz.php', 'FrmBillplzPaymentsController::install');
         
         if (is_admin()) {
             add_action('admin_menu', 'FrmBillplzPaymentsController::menu', 25);
             add_filter('frm_nav_array', 'FrmBillplzPaymentsController::frm_nav', 30);
-            add_filter("plugin_action_links_{$path}/formidable-billplz.php", 'FrmBillplzPaymentsController::settings_link', 10, 2);
+            add_filter("plugin_action_links_{$basename}/formidable-billplz.php", 'FrmBillplzPaymentsController::settings_link', 10, 2);
             add_action("after_plugin_row_{$path}/formidable-billplz.php", 'FrmBillplzPaymentsController::min_version_notice');
             add_action( 'admin_notices', 'FrmBillplzPaymentsController::get_started_headline' );
             add_action( 'admin_init', 'FrmBillplzPaymentsController::load_updater' );
@@ -39,6 +40,11 @@ class FrmBillplzPaymentsController
     public static function path()
     {
         return dirname(dirname(__FILE__));
+    }
+
+    public static function basename()
+    {
+        return plugin_basename(self::path());
     }
 
     public static function menu()
@@ -464,8 +470,8 @@ class FrmBillplzPaymentsController
             $name = sanitize_text_field($_POST['item_meta'][ $name_field ]);
         } elseif (! empty($name_field) && isset($entry->metas[ $name_field ])) {
             $name = $entry->metas[ $name_field ];
-        } elseif (isset($settings['name'])) {
-            $name = $settings['name'];
+        } elseif (isset($settings['bill_name'])) {
+            $name = $settings['bill_name'];
         }
 
         return trim($name);
@@ -512,8 +518,8 @@ class FrmBillplzPaymentsController
             $description = sanitize_text_field($_POST['item_meta'][ $description_field ]);
         } elseif (! empty($description_field) && isset($entry->metas[ $description_field ])) {
             $description = $entry->metas[ $description_field ];
-        } elseif (isset($settings['description'])) {
-            $description = $settings['description'];
+        } elseif (isset($settings['bill_description'])) {
+            $description = $settings['bill_description'];
         }
 
         return trim($description);
@@ -580,7 +586,7 @@ class FrmBillplzPaymentsController
     }
 
     private static function check_global_fallbacks( &$settings ) {
-        $globals = array( 'is_sandbox', 'api_key', 'collection_id', 'x_signature', 'description', 'return_url', 'cancel_url' );
+        $globals = array( 'is_sandbox', 'api_key', 'collection_id', 'x_signature', 'bill_description', 'return_url', 'cancel_url' );
         foreach ( $globals as $name ) {
             $settings[ $name ] = FrmBillplzPaymentsHelper::get_action_setting( $name, array( 'settings' => $settings ) );
         }

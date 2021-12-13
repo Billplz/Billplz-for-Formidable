@@ -310,27 +310,18 @@ class FrmBillplzPaymentsBillplzWPConnectHelper
         $data = array();
 
         if (isset($_GET['billplz']['x_signature'])) {
-            $keys = array('id', 'paid_at', 'paid', 'transaction_id', 'transaction_status', 'x_signature');
-
-            foreach ($keys as $key){
-                if (isset($_GET['billplz'][$key])){
-                    $data['billplz'][$key] = $_GET['billplz'][$key];
-                }
-            } 
+            // this to filter out any other keys
+            $data['billplz'] = $_GET['billplz'];
             $type = 'redirect';
         } elseif (isset($_POST['x_signature'])) {
-            $keys = array('amount', 'collection_id', 'due_at', 'email', 'id', 'mobile', 'name', 'paid_amount', 'transaction_id', 'transaction_status', 'paid_at', 'paid', 'state', 'url', 'x_signature');
-            foreach ($keys as $key){
-                if (isset($_POST[$key])){
-                    $data[$key] = $_POST[$key];
-                }
-            }
+            $data = $_POST;
             $type = 'callback';
         } else {
             throw new \Exception('X Signature on Payment Completion not activated.');
         }
 
         $signing = self::buildSourceString($data);
+        $signed = hash_hmac('sha256', $signing, $x_signature_key);
 
         if ($type == 'redirect'){
             $data = $data['billplz'];
@@ -340,8 +331,6 @@ class FrmBillplzPaymentsBillplzWPConnectHelper
          * Convert paid status to boolean
          */
         $data['paid'] = $data['paid'] === 'true' ? true : false;
-
-        $signed = hash_hmac('sha256', $signing, $x_signature_key);
 
         if ($data['x_signature'] === $signed) {
             $data['type'] = $type;

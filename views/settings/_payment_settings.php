@@ -42,7 +42,7 @@
                 }
                 ?>
             </select>
-            <input type="text" value="<?php echo esc_attr($form_action->post_content['name']) ?>" name="<?php echo esc_attr($this->get_field_name('name')) ?>" class="frm_enternew <?php echo $show_name ? '' : 'frm_hidden'; ?>" />
+            <input type="text" value="<?php echo esc_attr($form_action->post_content['bill_name']) ?>" name="<?php echo esc_attr($this->get_field_name('bill_name')) ?>" class="frm_enternew <?php echo $show_name ? '' : 'frm_hidden'; ?>" />
             <span class="clear"></span>
             <label class="frm_left_label">&nbsp;</label>
             <a class="hide-if-no-js frm_toggle_bz_opts">
@@ -132,7 +132,7 @@
                 }
                 ?>
             </select>
-            <input type="textarea" value="<?php echo esc_attr($form_action->post_content['description']) ?>" name="<?php echo esc_attr($this->get_field_name('description')) ?>" class="frm_enternew <?php echo $show_description ? '' : 'frm_hidden'; ?>" />
+            <input type="textarea" value="<?php echo esc_attr($form_action->post_content['bill_description']) ?>" name="<?php echo esc_attr($this->get_field_name('bill_description')) ?>" class="frm_enternew <?php echo $show_description ? '' : 'frm_hidden'; ?>" />
             <span class="clear"></span>
             <label class="frm_left_label">&nbsp;</label>
             <a class="hide-if-no-js frm_toggle_bz_opts">

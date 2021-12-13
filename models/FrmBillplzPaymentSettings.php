@@ -17,7 +17,8 @@ class FrmBillplzPaymentSettings
             'api_key'                => '',
             'collection_id'          => '',
             'x_signature'            => '',
-            'description'            => 'Payment',
+            // not using description to avoid conflict
+            'bill_description'       => 'Payment',
             'reference_1_label'      => '',
             'reference_1'            => '',
             'reference_2_label'      => '',
