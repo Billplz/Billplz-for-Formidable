@@ -1,8 +1,8 @@
 === Billplz for Formidable ===
 Contributors: billplz
 Tags: billplz
-Tested up to: 5.8
-Stable tag: 3.2.3
+Tested up to: 6.1.1
+Stable tag: 3.2.4
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,6 +21,9 @@ None
 * Later
 
 == Changelog ==
+
+= 3.2.4 =
+* FIXED: Fix redirect to payment page
 
 = 3.2.3 =
 * FIXED: Broken action settings links

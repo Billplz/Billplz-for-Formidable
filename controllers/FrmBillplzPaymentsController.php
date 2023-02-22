@@ -342,7 +342,7 @@ class FrmBillplzPaymentsController
         $atts['amount'] = $amount;
         self::create_invoice_for_payment($atts, $rbody);
 
-        if (isset($atts['action_settings']['update_bill_id'])){
+        if (is_callable('FrmProEntryMeta::update_single_field') && isset($atts['action_settings']['update_bill_id'])){
             FrmProEntryMeta::update_single_field(array(
               'entry_id' => $entry_id,
               'field_id' => $atts['action_settings']['update_bill_id'],
