@@ -725,10 +725,19 @@ class FrmBillplzPaymentsController
 
         if ($data['type'] === 'redirect') {
             if ($data['paid']) {
-                $redirect_url = $post_meta['return_url'];
+                $redirect_url = self::process_shortcodes(array(
+                    'value' => urldecode( add_query_arg( $_REQUEST['billplz'], $post_meta['return_url'] ) ),
+                    'form'  => $wp_post->menu_order,
+                    'entry' => $entry,
+                ));
             } else {
-                $redirect_url = $post_meta['cancel_url'];
+                $redirect_url = self::process_shortcodes(array(
+                    'value' => urldecode( add_query_arg( $_REQUEST['billplz'], $post_meta['cancel'] ) ),
+                    'form'  => $wp_post->menu_order,
+                    'entry' => $entry,
+                ));
             }
+
             header('Location: '. $redirect_url);
         }
         exit;
@@ -780,20 +789,28 @@ class FrmBillplzPaymentsController
     private static function process_shortcodes($atts)
     {
         $value = $atts['value'];
-        if (strpos($value, '[') === false) {
-            // if there are no shortcodes, we don't need to filter
-            return $value;
+
+        // Check if there are any shortcodes
+        if ( strpos( $value, '[' ) !== false ) {
+            // For pro version
+            if ( is_callable( 'FrmProFieldsHelper::replace_non_standard_formidable_shortcodes' ) ) {
+                FrmProFieldsHelper::replace_non_standard_formidable_shortcodes(array(), $value);
+
+                if (isset($atts['entry']) && ! empty($atts['entry'])) {
+                    $value = apply_filters('frm_content', $value, $atts['form'], $atts['entry']);
+                }
+
+                return do_shortcode($value);
+            }
+
+            // For free version
+            if ( is_callable( 'FrmFieldsHelper::basic_replace_shortcodes' ) ) {
+                return FrmFieldsHelper::basic_replace_shortcodes( $value, $atts['form'], $atts['entry'] );
+            }
         }
 
-        if (is_callable('FrmProFieldsHelper::replace_non_standard_formidable_shortcodes')) {
-            FrmProFieldsHelper::replace_non_standard_formidable_shortcodes(array(), $value);
-        }
+        return $value;
 
-        if (isset($atts['entry']) && ! empty($atts['entry'])) {
-            $value = apply_filters('frm_content', $value, $atts['form'], $atts['entry']);
-        }
-
-        return do_shortcode($value);
     }
 
     public static function update_options($options, $values)
