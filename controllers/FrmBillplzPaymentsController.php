@@ -10,15 +10,13 @@ class FrmBillplzPaymentsController
 
     public static function load_hooks()
     {
-        $path = self::path();
-        $basename = self::basename();
-        register_activation_hook($path . '/formidable-billplz.php', 'FrmBillplzPaymentsController::install');
+        register_activation_hook(FRM_BILLPLZ_PATH . 'formidable-billplz.php', 'FrmBillplzPaymentsController::install');
         
         if (is_admin()) {
             add_action('admin_menu', 'FrmBillplzPaymentsController::menu', 25);
             add_filter('frm_nav_array', 'FrmBillplzPaymentsController::frm_nav', 30);
-            add_filter("plugin_action_links_{$basename}/formidable-billplz.php", 'FrmBillplzPaymentsController::settings_link', 10, 2);
-            add_action("after_plugin_row_{$path}/formidable-billplz.php", 'FrmBillplzPaymentsController::min_version_notice');
+            add_filter('plugin_action_links_' . FRM_BILLPLZ_BASENAME . 'formidable-billplz.php', 'FrmBillplzPaymentsController::settings_link', 10, 2);
+            add_action('after_plugin_row_' . FRM_BILLPLZ_PATH . 'formidable-billplz.php', 'FrmBillplzPaymentsController::min_version_notice');
             add_action( 'admin_notices', 'FrmBillplzPaymentsController::get_started_headline' );
             add_action( 'admin_init', 'FrmBillplzPaymentsController::load_updater' );
             add_action( 'wp_ajax_frmbz_install', 'FrmBillplzPaymentsController::install' );
@@ -35,16 +33,6 @@ class FrmBillplzPaymentsController
         add_action('frm_trigger_billplz_create_action', 'FrmBillplzPaymentsController::create_payment_trigger', 10, 3);
 
         add_filter('frm_csv_columns', 'FrmBillplzPaymentsController::add_payment_to_csv', 20, 2);
-    }
-
-    public static function path()
-    {
-        return dirname(dirname(__FILE__));
-    }
-
-    public static function basename()
-    {
-        return plugin_basename(self::path());
     }
 
     public static function menu()
@@ -142,7 +130,7 @@ class FrmBillplzPaymentsController
             } else {
                 return;
             }
-            include( self::path() . '/views/notices/update_database.php' );
+            include( FRM_BILLPLZ_PATH . 'views/notices/update_database.php' );
         }
     }
 
@@ -177,7 +165,7 @@ class FrmBillplzPaymentsController
             }
         }
         
-        include(self::path() .'/views/payments/show.php');
+        include(FRM_BILLPLZ_PATH . 'views/payments/show.php');
     }
 
     private static function display_list($message = '', $errors = array())
@@ -198,7 +186,7 @@ class FrmBillplzPaymentsController
             $wp_list_table->prepare_items();
         }
 
-        include(self::path() . '/views/payments/list.php');
+        include(FRM_BILLPLZ_PATH . 'views/payments/list.php');
     }
 
     public static function save_per_page($save, $option, $value)
@@ -725,10 +713,19 @@ class FrmBillplzPaymentsController
 
         if ($data['type'] === 'redirect') {
             if ($data['paid']) {
-                $redirect_url = $post_meta['return_url'];
+                $redirect_url = self::process_shortcodes(array(
+                    'value' => $post_meta['return_url'],
+                    'form'  => $wp_post->menu_order,
+                    'entry' => $entry,
+                ));
             } else {
-                $redirect_url = $post_meta['cancel_url'];
+                $redirect_url = self::process_shortcodes(array(
+                    'value' => $post_meta['cancel'],
+                    'form'  => $wp_post->menu_order,
+                    'entry' => $entry,
+                ));
             }
+
             header('Location: '. $redirect_url);
         }
         exit;
@@ -780,20 +777,28 @@ class FrmBillplzPaymentsController
     private static function process_shortcodes($atts)
     {
         $value = $atts['value'];
-        if (strpos($value, '[') === false) {
-            // if there are no shortcodes, we don't need to filter
-            return $value;
+
+        // Check if there are any shortcodes
+        if ( strpos( $value, '[' ) !== false ) {
+            // For pro version
+            if ( is_callable( 'FrmProFieldsHelper::replace_non_standard_formidable_shortcodes' ) ) {
+                FrmProFieldsHelper::replace_non_standard_formidable_shortcodes(array(), $value);
+
+                if (isset($atts['entry']) && ! empty($atts['entry'])) {
+                    $value = apply_filters('frm_content', $value, $atts['form'], $atts['entry']);
+                }
+
+                return do_shortcode($value);
+            }
+
+            // For free version
+            if ( is_callable( 'FrmFieldsHelper::basic_replace_shortcodes' ) ) {
+                return FrmFieldsHelper::basic_replace_shortcodes( $value, $atts['form'], $atts['entry'] );
+            }
         }
 
-        if (is_callable('FrmProFieldsHelper::replace_non_standard_formidable_shortcodes')) {
-            FrmProFieldsHelper::replace_non_standard_formidable_shortcodes(array(), $value);
-        }
+        return $value;
 
-        if (isset($atts['entry']) && ! empty($atts['entry'])) {
-            $value = apply_filters('frm_content', $value, $atts['form'], $atts['entry']);
-        }
-
-        return do_shortcode($value);
     }
 
     public static function update_options($options, $values)
@@ -821,7 +826,7 @@ class FrmBillplzPaymentsController
         $date_format = get_option('date_format');
         $currencies = FrmBillplzPaymentsHelper::get_currencies();
         
-        include(self::path() .'/views/payments/sidebar_list.php');
+        include(FRM_BILLPLZ_PATH . 'views/payments/sidebar_list.php');
     }
 
     public static function entry_columns($columns)
@@ -996,7 +1001,7 @@ class FrmBillplzPaymentsController
         $frm_payment_settings = new FrmBillplzPaymentSettings();
         $currency = FrmBillplzPaymentsHelper::get_currencies($frm_payment_settings->settings->currency);
 
-        require(self::path() .'/views/payments/new.php');
+        require(FRM_BILLPLZ_PATH . 'views/payments/new.php');
     }
 
     private static function get_edit_vars($id, $errors = '', $message = '')
@@ -1025,7 +1030,7 @@ class FrmBillplzPaymentsController
             }
         }
         
-        require(self::path() .'/views/payments/edit.php');
+        require(FRM_BILLPLZ_PATH . 'views/payments/edit.php');
     }
 
     public static function route()

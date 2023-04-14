@@ -5,16 +5,26 @@ class FrmBillplzPaymentAction extends FrmFormAction
 
     function __construct()
     {
+        add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+
         $action_ops = array(
-            'classes'   => 'frm_wordpress_icon frm_icon_font',
+            'classes'   => 'frm_billplz_icon',
             'active'    => true,
             'event'     => array('create'),
             'priority'  => 9, // trigger before emails are sent so they can be stopped
+            'color'     => '#3784F4',
             'limit'     => 99,
         );
         
         $this->FrmFormAction('billplz', __('Billplz', 'frmbz'), $action_ops);
         add_action('wp_ajax_frmbz_after_pay', array( $this, 'add_new_pay_row' ));
+    }
+
+    public function admin_enqueue_scripts()
+    {
+        if ( is_callable( array( 'FrmAppHelper', 'plugin_url' ) ) ) {
+            wp_enqueue_style( 'frm_billplz_admin', FRM_BILLPLZ_URL . 'assets/css/admin.css', array( 'formidable-admin' ), FRM_BILLPLZ_VER );
+        }
     }
 
     public static function get_payment_action($action_id)
@@ -50,7 +60,7 @@ class FrmBillplzPaymentAction extends FrmFormAction
         $show_reference_1 = ($form_action->post_content['reference_1'] != '');
         $show_reference_2 = ($form_action->post_content['reference_2'] != '');
         
-        include(FrmBillplzPaymentsController::path() . '/views/settings/_payment_settings.php');
+        include(FRM_BILLPLZ_PATH . 'views/settings/_payment_settings.php');
     }
 
     function add_new_pay_row()
@@ -74,7 +84,7 @@ class FrmBillplzPaymentAction extends FrmFormAction
         $id = 'frmbz_after_pay_row_' . absint($atts['form_action']->ID) . '_' . $atts['row_num'];
         $atts['name'] = $this->get_field_name('change_field');
         $atts['form_fields'] = $this->get_field_options($atts['form_id']);
-        include(FrmBillplzPaymentsController::path() . '/views/settings/_after_pay_row.php');
+        include(FRM_BILLPLZ_PATH . 'views/settings/_after_pay_row.php');
     }
 
     function get_defaults()

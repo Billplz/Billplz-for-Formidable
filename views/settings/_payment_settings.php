@@ -3,22 +3,22 @@
         <input type="hidden" value="<?php echo absint($form_action->ID) ?>" name="<?php echo esc_attr($this->get_field_name('action_id')) ?>" />
         <p><label class="frm_left_label"><?php _e('Is Sandbox', 'frmbz') ?></label>
             <select name="<?php echo esc_attr($this->get_field_name('is_sandbox')) ?>" id="<?php echo esc_attr( $this->get_field_id( 'is_sandbox' ) ); ?>">
-                <option value="sandbox" <?php selected($form_action->post_content['is_sandbox'], 'sandbox') ?>>sandbox</option>
-                <option value="production" <?php selected($form_action->post_content['is_sandbox'], 'production') ?>>production</option>
+                <option value="sandbox" <?php selected($form_action->post_content['is_sandbox'], 'sandbox') ?>>Sandbox</option>
+                <option value="production" <?php selected($form_action->post_content['is_sandbox'], 'production') ?>>Production</option>
             </select>
         </p>
         <p><label class="frm_left_label"><?php _e('API Key', 'frmbz') ?></label>
-            <input type="text" name="<?php echo esc_attr($this->get_field_name('api_key')) ?>" id="<?php echo esc_attr( $this->get_field_id( 'api_key' ) ); ?>" value="<?php echo esc_attr($form_action->post_content['api_key']); ?>" class="frm_not_email_subject frm_with_left_label" />
-            <span class="clear"></span>
-        </p>
-
-        <p><label class="frm_left_label"><?php _e('Collection ID', 'frmbz') ?></label>
-            <input type="text" name="<?php echo esc_attr($this->get_field_name('collection_id')) ?>" id="<?php echo esc_attr($this->get_field_id('collection_id')); ?>" value="<?php echo esc_attr($form_action->post_content['collection_id']); ?>" class="frm_not_email_to frm_with_left_label" />
+            <input type="text" name="<?php echo esc_attr($this->get_field_name('api_key')) ?>" id="<?php echo esc_attr( $this->get_field_id( 'api_key' ) ); ?>" value="<?php echo esc_attr($form_action->post_content['api_key']); ?>" class="frm_with_left_label" />
             <span class="clear"></span>
         </p>
 
         <p><label class="frm_left_label"><?php _e('X Signature Key', 'frmbz') ?></label>
-            <input type="text" name="<?php echo esc_attr($this->get_field_name('x_signature')) ?>" id="<?php echo esc_attr($this->get_field_id('x_signature')); ?>" value="<?php echo esc_attr($form_action->post_content['x_signature']); ?>" class="frm_not_email_to frm_with_left_label" />
+            <input type="text" name="<?php echo esc_attr($this->get_field_name('x_signature')) ?>" id="<?php echo esc_attr($this->get_field_id('x_signature')); ?>" value="<?php echo esc_attr($form_action->post_content['x_signature']); ?>" class="frm_with_left_label" />
+            <span class="clear"></span>
+        </p>
+
+        <p><label class="frm_left_label"><?php _e('Collection ID', 'frmbz') ?></label>
+            <input type="text" name="<?php echo esc_attr($this->get_field_name('collection_id')) ?>" id="<?php echo esc_attr($this->get_field_id('collection_id')); ?>" value="<?php echo esc_attr($form_action->post_content['collection_id']); ?>" class="frm_with_left_label" />
             <span class="clear"></span>
         </p>
 
@@ -132,7 +132,7 @@
                 }
                 ?>
             </select>
-            <input type="textarea" value="<?php echo esc_attr($form_action->post_content['bill_description']) ?>" name="<?php echo esc_attr($this->get_field_name('bill_description')) ?>" class="frm_enternew <?php echo $show_description ? '' : 'frm_hidden'; ?>" />
+            <input type="text" value="<?php echo esc_attr($form_action->post_content['bill_description']) ?>" name="<?php echo esc_attr($this->get_field_name('bill_description')) ?>" class="frm_enternew <?php echo $show_description ? '' : 'frm_hidden'; ?>" />
             <span class="clear"></span>
             <label class="frm_left_label">&nbsp;</label>
             <a class="hide-if-no-js frm_toggle_bz_opts">

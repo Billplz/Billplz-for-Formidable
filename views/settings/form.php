@@ -3,8 +3,8 @@
             <td width="200px"><label><?php _e('Is Sandbox', 'frmbz') ?></label></td>
             <td>
                 <select name="frm_billplz_is_sandbox" id="frm_billplz_is_sandbox">
-                <option value="sandbox" <?php selected($frm_payment_settings->settings->is_sandbox, 'sandbox') ?>>sandbox</option>
-                <option value="production" <?php selected($frm_payment_settings->settings->is_sandbox, 'production') ?>>production</option>
+                <option value="sandbox" <?php selected($frm_payment_settings->settings->is_sandbox, 'sandbox') ?>>Sandbox</option>
+                <option value="production" <?php selected($frm_payment_settings->settings->is_sandbox, 'production') ?>>Production</option>
                 </select>
             </td>
         </tr>
@@ -16,16 +16,16 @@
             </td>
         </tr>
         <tr class="form-field" valign="top">
-            <td width="200px"><label><?php _e('Collection ID', 'frmbz') ?></label></td>
+            <td width="200px"><label><?php _e('X Signature Key', 'frmbz') ?></label></td>
             <td>
-                <input type="text" name="frm_billplz_collection_id" id="frm_billplz_collection_id" value="<?php echo esc_attr($frm_payment_settings->settings->collection_id) ?>" class="frm_short_input" />
+                <input type="text" name="frm_billplz_x_signature" id="frm_billplz_x_signature" value="<?php echo esc_attr($frm_payment_settings->settings->x_signature) ?>" class="frm_long_input" />
                     
             </td>
         </tr>
         <tr class="form-field" valign="top">
-            <td width="200px"><label><?php _e('X Signature Key', 'frmbz') ?></label></td>
+            <td width="200px"><label><?php _e('Collection ID', 'frmbz') ?></label></td>
             <td>
-                <input type="text" name="frm_billplz_x_signature" id="frm_billplz_x_signature" value="<?php echo esc_attr($frm_payment_settings->settings->x_signature) ?>" class="frm_long_input" />
+                <input type="text" name="frm_billplz_collection_id" id="frm_billplz_collection_id" value="<?php echo esc_attr($frm_payment_settings->settings->collection_id) ?>" class="frm_short_input" />
                     
             </td>
         </tr>

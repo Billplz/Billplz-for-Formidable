@@ -27,7 +27,7 @@
         $form_action = 'create';
         wp_nonce_field('create-options');
         
-        require(FrmBillplzPaymentsController::path() .'/views/payments/form.php');
+        require(FRM_BILLPLZ_PATH . 'views/payments/form.php');
         ?>
 
         <p>

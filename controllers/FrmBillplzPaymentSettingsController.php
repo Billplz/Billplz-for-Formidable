@@ -21,7 +21,13 @@ class FrmBillplzPaymentSettingsController
 
     public static function add_settings_section($sections)
     {
-        $sections['billplz'] = array('class' => 'FrmBillplzPaymentSettingsController', 'function' => 'route');
+        $sections['billplz'] = array(
+            'class'    => 'FrmBillplzPaymentSettingsController',
+            'title'    => __( 'Billplz', 'frmbz' ),
+            'function' => 'route',
+            'icon'     => 'frm_billplz_icon',
+        );
+
         return $sections;
     }
     
@@ -55,7 +61,7 @@ class FrmBillplzPaymentSettingsController
     {
         $frm_payment_settings = new FrmBillplzPaymentSettings();
 
-        require(FrmBillplzPaymentsController::path() .'/views/settings/form.php');
+        require(FRM_BILLPLZ_PATH . 'views/settings/form.php');
     }
 
     public static function process_form()
@@ -138,7 +144,7 @@ class FrmBillplzPaymentSettingsController
 
     public static function actions_js()
     {
-        wp_enqueue_script('frmbz', FrmBillplzPaymentsHelper::get_file_url('frmbz.js'));
+        wp_enqueue_script('frmbz', FRM_BILLPLZ_URL . 'assets/js/frmbz.js');
     }
 
     public static function migrate_to_2($form)
