@@ -1,0 +1,49 @@
+.frm_billplz_icon {
+    width: 30px !important;
+    height: 30px !important;
+    display: block;
+    padding: 0 !important;
+    margin: -4px;
+    position: relative;
+}
+.frm_billplz_icon::after {
+    content: '';
+    background: transparent url('../images/icon.png') no-repeat center;
+    background-size: 30px 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.frm_single_billplz_settings .widget-title .frm_form_action_icon {
+    background-color: #3784F4;
+}
+.frm_single_billplz_settings .widget-title .frm_billplz_icon {
+    margin: -5px;
+}
+.frm_single_billplz_settings .widget-title .frm_billplz_icon,
+.frm_single_billplz_settings .widget-title .frm_billplz_icon::after {
+    width: 25px !important;
+    height: 25px !important;
+}
+.frm_single_billplz_settings .widget-title .frm_billplz_icon::after {
+    background-size: 25px 25px;
+}
+
+.frm-form-setting-tabs .frm_billplz_icon {
+    background-color: #3784F4;
+    border-radius: 2px;
+    margin: 0;
+}
+.frm-form-setting-tabs .frm_billplz_icon,
+.frm-form-setting-tabs .frm_billplz_icon::after {
+    width: 20px !important;
+    height: 20px !important;
+}
+.frm-form-setting-tabs .frm_billplz_icon::after {
+    background-size: 20px 20px;
+}

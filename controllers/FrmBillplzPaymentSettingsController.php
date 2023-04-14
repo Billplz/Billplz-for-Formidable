@@ -21,7 +21,13 @@ class FrmBillplzPaymentSettingsController
 
     public static function add_settings_section($sections)
     {
-        $sections['billplz'] = array('class' => 'FrmBillplzPaymentSettingsController', 'function' => 'route');
+        $sections['billplz'] = array(
+            'class'    => 'FrmBillplzPaymentSettingsController',
+            'title'    => __( 'Billplz', 'frmbz' ),
+            'function' => 'route',
+            'icon'     => 'frm_billplz_icon',
+        );
+
         return $sections;
     }
     
