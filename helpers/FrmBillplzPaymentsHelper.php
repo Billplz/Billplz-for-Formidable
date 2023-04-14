@@ -3,15 +3,6 @@
 class FrmBillplzPaymentsHelper
 {
 
-    /**
-     * Get the url of a file inside the plugin
-     * @since 3.0
-     */
-    public static function get_file_url($file = '')
-    {
-        return plugins_url($file, dirname(__FILE__));
-    }
-
     public static function get_default_options()
     {
         $frm_payment_settings = new FrmBillplzPaymentSettings();

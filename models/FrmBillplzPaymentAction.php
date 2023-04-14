@@ -50,7 +50,7 @@ class FrmBillplzPaymentAction extends FrmFormAction
         $show_reference_1 = ($form_action->post_content['reference_1'] != '');
         $show_reference_2 = ($form_action->post_content['reference_2'] != '');
         
-        include(FrmBillplzPaymentsController::path() . '/views/settings/_payment_settings.php');
+        include(FRM_BILLPLZ_PATH . 'views/settings/_payment_settings.php');
     }
 
     function add_new_pay_row()
@@ -74,7 +74,7 @@ class FrmBillplzPaymentAction extends FrmFormAction
         $id = 'frmbz_after_pay_row_' . absint($atts['form_action']->ID) . '_' . $atts['row_num'];
         $atts['name'] = $this->get_field_name('change_field');
         $atts['form_fields'] = $this->get_field_options($atts['form_id']);
-        include(FrmBillplzPaymentsController::path() . '/views/settings/_after_pay_row.php');
+        include(FRM_BILLPLZ_PATH . 'views/settings/_after_pay_row.php');
     }
 
     function get_defaults()
