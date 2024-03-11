@@ -172,13 +172,17 @@
             <span class="clear"></span>
         </p>
 
-        <p><label class="frm_left_label"><?php _e('Send a Bill Copy', 'frmbz') ?></label>
-            <select name="<?php echo esc_attr($this->get_field_name('send_copy')) ?>" id="frm_billplz_send_copy">
-                <option value="0" <?php selected($form_action->post_content['send_copy'], '0') ?>><?php esc_html_e('Don\'t Send'); ?></option>
-                <option value="1" <?php selected($form_action->post_content['send_copy'], '1') ?>><?php esc_html_e('Email Only'); ?></option>
-                <option value="2" <?php selected($form_action->post_content['send_copy'], '2') ?>><?php esc_html_e('SMS Only'); ?></option>
-                <option value="3" <?php selected($form_action->post_content['send_copy'], '3') ?>><?php esc_html_e('Email & SMS'); ?></option>
-            </select>
+        <p>
+            <label class="frm_left_label"><?php _e('Send a Bill Copy', 'frmbz') ?></label>
+
+            <label for="<?php echo esc_attr( $this->get_field_id( 'send_copy_email' ) ); ?>">
+                <input type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'send_copy_email' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'send_copy_email' ) ); ?>" value="1" <?php checked( $form_action->post_content['send_copy_email'], 1 ); ?> />
+                <?php esc_html_e( 'Email', 'frmbz' ); ?>
+            </label>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'send_copy_mobile' ) ); ?>">
+                <input type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'send_copy_mobile' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'send_copy_mobile' ) ); ?>" value="1" <?php checked( $form_action->post_content['send_copy_mobile'], 1 ); ?> />
+                <?php esc_html_e( 'SMS (subjected to charges depending on subscribed plan)', 'frmbz' ); ?>
+            </label>
         </p>
 
         <p><label class="frm_left_label"><?php _e('Reference 1 Label', 'frmbz') ?></label>

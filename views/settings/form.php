@@ -39,12 +39,14 @@
         <tr class="form-field" valign="top">
             <td><label><?php _e('Send a Bill Copy', 'frmbz') ?></label></td>
             <td>
-                <select name="frm_billplz_send_copy" id="frm_billplz_send_copy">
-                    <option value="0" <?php selected($form_action->post_content['send_copy'], '0') ?>><?php esc_html_e('Don\'t Send'); ?></option>
-                    <option value="1" <?php selected($form_action->post_content['send_copy'], '1') ?>><?php esc_html_e('Email Only'); ?></option>
-                    <option value="2" <?php selected($form_action->post_content['send_copy'], '2') ?>><?php esc_html_e('SMS Only'); ?></option>
-                    <option value="3" <?php selected($form_action->post_content['send_copy'], '3') ?>><?php esc_html_e('Email & SMS'); ?></option>
-                </select>
+                <label for="frm_billplz_send_copy_email">
+                    <input type="checkbox" name="frm_billplz_send_copy_email" id="frm_billplz_send_copy_email" value="1" <?php checked( $frm_payment_settings->settings->send_copy_email, 1 ); ?> />
+                    <?php esc_html_e( 'Email', 'frmbz' ); ?>
+                </label>
+                <label for="frm_billplz_send_copy_mobile">
+                    <input type="checkbox" name="frm_billplz_send_copy_mobile" id="frm_billplz_send_copy_mobile" value="1" <?php checked( $frm_payment_settings->settings->send_copy_mobile, 1 ); ?> />
+                    <?php esc_html_e( 'SMS (subjected to charges depending on subscribed plan)', 'frmbz' ); ?>
+                </label>
             </td>
         </tr>
         <tr class="form-field" valign="top">
