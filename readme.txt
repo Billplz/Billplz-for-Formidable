@@ -1,8 +1,8 @@
 === Billplz for Formidable ===
 Contributors: billplz
 Tags: billplz
-Tested up to: 6.2
-Stable tag: 3.2.5
+Tested up to: 6.4.3
+Stable tag: 3.2.6
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,6 +21,9 @@ None
 * Later
 
 == Changelog ==
+
+= 3.2.6 =
+* NEW: Added option to send a bill copy to email/SMS
 
 = 3.2.5 =
 * FIXED: Shortcode was not working when specified in the return or cancel URL field of the plugin settings

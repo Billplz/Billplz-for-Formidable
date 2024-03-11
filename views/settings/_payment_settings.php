@@ -172,6 +172,15 @@
             <span class="clear"></span>
         </p>
 
+        <p><label class="frm_left_label"><?php _e('Send a Bill Copy', 'frmbz') ?></label>
+            <select name="<?php echo esc_attr($this->get_field_name('send_copy')) ?>" id="frm_billplz_send_copy">
+                <option value="0" <?php selected($form_action->post_content['send_copy'], '0') ?>><?php esc_html_e('Don\'t Send'); ?></option>
+                <option value="1" <?php selected($form_action->post_content['send_copy'], '1') ?>><?php esc_html_e('Email Only'); ?></option>
+                <option value="2" <?php selected($form_action->post_content['send_copy'], '2') ?>><?php esc_html_e('SMS Only'); ?></option>
+                <option value="3" <?php selected($form_action->post_content['send_copy'], '3') ?>><?php esc_html_e('Email & SMS'); ?></option>
+            </select>
+        </p>
+
         <p><label class="frm_left_label"><?php _e('Reference 1 Label', 'frmbz') ?></label>
             <input type="text" name="<?php echo esc_attr($this->get_field_name('reference_1_label')) ?>" id="<?php echo esc_attr($this->get_field_id('reference_1_label')) ?>" value="<?php echo esc_attr($form_action->post_content['reference_1_label']); ?>" class="frm_not_email_to frm_with_left_label frm_short_input" />
             <span class="clear"></span>

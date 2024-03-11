@@ -320,7 +320,9 @@ class FrmBillplzPaymentsController
             'reference_2' => substr($ref_2, 0, 120)
         );
 
-        list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
+        $send_copy = (string) trim($frm_pay_form_settings['send_copy']);
+
+        list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, $send_copy));
 
         if ($rheader != 200) {
             FrmBillplzPaymentsHelper::log_message('Failed to create bill ' . print_r($rbody, true));

@@ -19,6 +19,7 @@ class FrmBillplzPaymentSettings
             'x_signature'            => '',
             // not using description to avoid conflict
             'bill_description'       => 'Payment',
+            'send_copy'              => '0',
             'reference_1_label'      => '',
             'reference_1'            => '',
             'reference_2_label'      => '',
