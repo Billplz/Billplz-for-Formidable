@@ -320,7 +320,20 @@ class FrmBillplzPaymentsController
             'reference_2' => substr($ref_2, 0, 120)
         );
 
-        list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
+        $is_send_copy_email  = trim( $frm_pay_form_settings['send_copy_email'] ) === '1';
+        $is_send_copy_mobile = trim( $frm_pay_form_settings['send_copy_mobile'] ) === '1';
+
+        if ( $is_send_copy_email && $is_send_copy_mobile ) {
+            $send_copy = '3';
+        } elseif ( $is_send_copy_mobile ) {
+            $send_copy = '2';
+        } elseif ( $is_send_copy_email ) {
+            $send_copy = '1';
+        } else {
+            $send_copy = '0';
+        }
+
+        list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, $send_copy));
 
         if ($rheader != 200) {
             FrmBillplzPaymentsHelper::log_message('Failed to create bill ' . print_r($rbody, true));

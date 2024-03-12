@@ -19,6 +19,8 @@ class FrmBillplzPaymentSettings
             'x_signature'            => '',
             // not using description to avoid conflict
             'bill_description'       => 'Payment',
+            'send_copy_email'        => false,
+            'send_copy_mobile'       => false,
             'reference_1_label'      => '',
             'reference_1'            => '',
             'reference_2_label'      => '',
@@ -128,8 +130,11 @@ class FrmBillplzPaymentSettings
                 $this->settings->{$setting} = $params['frm_billplz_'. $setting];
             }
         }
-        
-        $this->settings->callback_log = isset($params['frm_billplz_callback_log']) ? $params['frm_billplz_callback_log'] : 0;
+
+        // Set default value for checkbox inputs
+        $this->settings->send_copy_email  = isset( $params['frm_billplz_send_copy_email'] ) ? $params['frm_billplz_send_copy_email'] : 0;
+        $this->settings->send_copy_mobile = isset( $params['frm_billplz_send_copy_mobile'] ) ? $params['frm_billplz_send_copy_mobile'] : 0;
+        $this->settings->callback_log     = isset( $params['frm_billplz_callback_log'] ) ? $params['frm_billplz_callback_log'] : 0;
     }
 
     function store()

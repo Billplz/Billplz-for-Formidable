@@ -172,6 +172,19 @@
             <span class="clear"></span>
         </p>
 
+        <p>
+            <label class="frm_left_label"><?php _e('Send a Bill Copy', 'frmbz') ?></label>
+
+            <label for="<?php echo esc_attr( $this->get_field_id( 'send_copy_email' ) ); ?>">
+                <input type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'send_copy_email' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'send_copy_email' ) ); ?>" value="1" <?php checked( $form_action->post_content['send_copy_email'], 1 ); ?> />
+                <?php esc_html_e( 'Email', 'frmbz' ); ?>
+            </label>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'send_copy_mobile' ) ); ?>">
+                <input type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'send_copy_mobile' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'send_copy_mobile' ) ); ?>" value="1" <?php checked( $form_action->post_content['send_copy_mobile'], 1 ); ?> />
+                <?php esc_html_e( 'SMS (subjected to charges depending on subscribed plan)', 'frmbz' ); ?>
+            </label>
+        </p>
+
         <p><label class="frm_left_label"><?php _e('Reference 1 Label', 'frmbz') ?></label>
             <input type="text" name="<?php echo esc_attr($this->get_field_name('reference_1_label')) ?>" id="<?php echo esc_attr($this->get_field_id('reference_1_label')) ?>" value="<?php echo esc_attr($form_action->post_content['reference_1_label']); ?>" class="frm_not_email_to frm_with_left_label frm_short_input" />
             <span class="clear"></span>

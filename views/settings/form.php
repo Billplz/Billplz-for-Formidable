@@ -37,6 +37,19 @@
             </td>
         </tr>
         <tr class="form-field" valign="top">
+            <td><label><?php _e('Send a Bill Copy', 'frmbz') ?></label></td>
+            <td>
+                <label for="frm_billplz_send_copy_email">
+                    <input type="checkbox" name="frm_billplz_send_copy_email" id="frm_billplz_send_copy_email" value="1" <?php checked( $frm_payment_settings->settings->send_copy_email, 1 ); ?> />
+                    <?php esc_html_e( 'Email', 'frmbz' ); ?>
+                </label>
+                <label for="frm_billplz_send_copy_mobile">
+                    <input type="checkbox" name="frm_billplz_send_copy_mobile" id="frm_billplz_send_copy_mobile" value="1" <?php checked( $frm_payment_settings->settings->send_copy_mobile, 1 ); ?> />
+                    <?php esc_html_e( 'SMS (subjected to charges depending on subscribed plan)', 'frmbz' ); ?>
+                </label>
+            </td>
+        </tr>
+        <tr class="form-field" valign="top">
             <td width="200px"><label><?php _e('Reference 1 Label', 'frmbz') ?></label></td>
             <td>
                 <input type="text" name="frm_billplz_reference_1_label" id="frm_billplz_reference_1_label" value="<?php echo esc_attr($frm_payment_settings->settings->reference_1_label) ?>" class="frm_long_input" />
