@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Billplz for Formidable
  * Description: Billplz. Fair payment platform.
- * Version: 3.2.6
+ * Version: 3.2.7
  * Plugin URI: http://github.com/billplz/billplz-for-formidable
  * Author URI: https://www.billplz.com
  * Author: Billplz Sdn Bhd
@@ -16,7 +16,7 @@ define( 'FRM_BILLPLZ_FILE',  __FILE__ );
 define( 'FRM_BILLPLZ_URL', plugin_dir_url(FRM_BILLPLZ_FILE));
 define( 'FRM_BILLPLZ_PATH', plugin_dir_path(FRM_BILLPLZ_FILE));
 define( 'FRM_BILLPLZ_BASENAME', plugin_basename(FRM_BILLPLZ_FILE));
-define( 'FRM_BILLPLZ_VER',  '3.2.6' );
+define( 'FRM_BILLPLZ_VER',  '3.2.7' );
 
 function frm_billplz_forms_autoloader($class_name)
 {
