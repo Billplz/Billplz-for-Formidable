@@ -733,7 +733,7 @@ class FrmBillplzPaymentsController
                 ));
             } else {
                 $redirect_url = self::process_shortcodes(array(
-                    'value' => $post_meta['cancel'],
+                    'value' => $post_meta['cancel_url'],
                     'form'  => $wp_post->menu_order,
                     'entry' => $entry,
                 ));
